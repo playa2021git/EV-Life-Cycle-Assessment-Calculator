@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<title>くるまのCO₂e実験室｜条件を変えて考えよう</title>
+<link rel="stylesheet" href="css/style.css?v=4">
+</head>
+<body>
+<a class="skip" href="#conditions">条件の設定へ進む</a>
+<header><a href="#top" class="brand">くるまの <strong>CO₂e</strong> 実験室</a><nav aria-label="ページ内"><a href="#results">結果</a><a href="#guide">使い方</a><a href="#sources">出典と仮定</a></nav></header>
+<main id="top">
+<section class="hero">
+<div><p class="eyebrow">街で見かける車から、考えよう。</p><h1>走る前から、<br>比べてみよう。</h1><p class="lead">サクラ、リーフ、プリウス。いつもの車を入り口に。<br>条件を変えると、排出量の合計はどう変わる？</p></div>
+<div class="hero-card"><span class="pill">中学生のためのLCA入門</span><p><b>LCA</b>は、ものの一生を通して環境への影響を考える方法です。</p><p><b>CO₂e（シーオーツー・イー）</b>は、メタンなども含む温室効果ガスを、CO₂の量に換算したもの。<b>1 t＝1,000 kg</b>です。</p></div>
+</section>
+<aside class="notice"><strong>この実験で分かるのは「仮定によって結果が変わること」。</strong><p>Volvoはメーカー公表の製造値、他車は公表LCAと諸元を参考にAIが計算を補助した学習用推定です。AIが実車を測定した値ではありません。使用分は全車とも教材の簡易計算です。廃棄・整備・道路建設などは含みません。</p></aside>
+<p id="boot-message" role="status">計算を準備しています。表示が変わらない場合は、JavaScriptを使えるブラウザで開いてください。</p>
+<noscript><p class="notice">この実験にはJavaScriptが必要です。出典と説明はこのまま読めます。</p></noscript>
+<form id="conditions">
+<section class="panel">
+<div class="section-head"><div><p class="eyebrow">01 / 使い方をそろえる</p><h2>同じ距離を、同じ年数だけ。</h2></div><button type="button" id="reset">はじめの条件に戻す</button></div>
+<p id="reset-status" class="sr-only" role="status"></p>
+
+<div class="fields two">
+<label for="kmPerDay">1日にどれくらい走る？<select id="kmPerDay" name="kmPerDay">
+<option value="5">5 km ／ あまり車に乗らない</option><option value="10" selected>10 km ／ 近所の買い物・送迎</option><option value="40">40 km ／ 毎日の通勤・お出かけ</option><option value="100">100 km ／ 長距離通勤</option></select></label>
+<label for="years">使う年数 <output id="years-display" for="years">10年</output><input id="years" name="years" type="range" min="1" max="30" step="1" value="10"><span class="range-ends"><span>1年</span><span>30年</span></span></label>
+</div><p class="hint">2台を同じ距離・同じ年数で比べます。1年は365日として計算します。</p>
+</section>
+
+<section class="panel" id="vehicles">
+<p class="eyebrow">02 / 身近な車を選ぶ</p><h2>どの車で考えてみる？</h2>
+<p>車を選ぶと、名前・写真・燃費・電池容量が切り替わります。</p>
+<div class="cars">
+<fieldset class="car ice"><legend>ガソリンで走る車・HEV</legend>
+<label for="ice-model">比較する車<select id="ice-model" name="iceModel">
+<option value="sports">スポーツカー ／ 8 km/L</option>
+<option value="passenger" selected>乗用車（非ハイブリッド） ／ 14 km/L</option>
+<option value="kei">燃費のよい軽自動車 ／ 22 km/L</option>
+<option value="prius">低燃費のプリウス（HEV） ／ 32.6 km/L</option></select></label>
+<h3 id="ice-name" class="vehicle-name"></h3>
+<figure class="vehicle-figure"><img id="ice-photo" width="640" height="400" alt=""><figcaption id="ice-caption"></figcaption><p class="photo-credit" id="ice-credit"></p></figure>
+<p class="efficiency">ガソリン1 Lで <b id="ice-efficiency"></b> km</p>
+<p class="hint" id="ice-note"></p><p class="data-kind" id="ice-kind"></p><p class="hint" id="ice-basis"></p>
+<div class="manufacture"><span>電池以外の製造・物流（推定）</span><strong id="ice-manufacture"></strong></div><p class="hint" id="ice-battery-note"></p><p class="hint" id="ice-range"></p>
+</fieldset>
+<fieldset class="car ev"><legend>電気で走る車・EV</legend>
+<label for="ev-model">比較するEV<select id="ev-model" name="evModel"><option value="sakura">日産 サクラ</option><option value="leaf">日産 リーフ（2021年・40 kWh）</option><option value="cybertruck">テスラ サイバートラック（Long Range参考）</option><option value="volvo_lfp">Volvo EX30 ／ LFP・51 kWh【公表LCA】</option><option value="volvo_nmc">Volvo EX30 ／ NMC・69 kWh【公表LCA】</option></select></label>
+<h3 id="ev-name" class="vehicle-name"></h3>
+<figure class="vehicle-figure"><img id="ev-photo" width="640" height="400" alt=""><figcaption id="ev-caption"></figcaption><p class="photo-credit" id="ev-credit"></p></figure>
+<p class="efficiency">電気1 kWhで <b id="ev-efficiency"></b> km</p><p class="hint" id="ev-note"></p><p class="data-kind" id="ev-kind"></p><p class="hint" id="ev-basis"></p>
+<div class="manufacture"><span>電池以外の製造・物流</span><strong id="ev-manufacture"></strong></div>
+<div class="manufacture battery-manufacture"><span>電池をつくる排出量（参考計算）</span><strong id="battery-manufacture"></strong><small id="battery-formula"></small></div>
+<div class="manufacture total-manufacture"><span>EVをつくる合計</span><strong id="ev-manufacture-total"></strong></div><p class="hint" id="ev-range"></p>
+</fieldset>
+</div>
+<p class="hint">写真は車のイメージをつかむための参考写真です。年式・仕様の違いは写真下に記載。製造排出量は実車の測定値ではありません。</p>
+<details><summary>計算の仮定を詳しく見る・変える</summary><div class="fields three detail-fields">
+<label>ガソリン車の電池以外の製造・物流（kg-CO₂e）<input type="number" name="iceVehicleKg" min="0" max="30000" step="any" value="9700" required></label>
+<label>EVの製造・物流・電池除外（kg-CO₂e）<input type="number" name="evVehicleKg" min="0" max="30000" step="any" value="8400" required></label>
+<label>最初の電池製造（kg-CO₂e/kWh）<input type="number" name="batteryKgPerKwh" min="0" max="200" step="any" value="90" required></label>
+<label>交換電池製造（kg-CO₂e/kWh）<input type="number" name="replacementKgPerKwh" min="0" max="200" step="1" value="90" required></label>
+<label>ガソリン製造・輸送（kg-CO₂e/L）<input type="number" name="petrolUpstreamKgPerL" min="0" max="3" step="0.1" value="0.5" required></label>
+</div><p class="hint">車種変更時は、そのモデルの製造設定へ戻ります。Volvoは公表値、他車は公開資料に基づく推定。Volvoの電池係数は公表量÷容量から算出しています。設定を変えた場合は公表値の再現ではありません。交換係数90は独立した将来仮定です。</p></details>
+<input type="hidden" name="iceBatteryKg" value="0"><input type="hidden" name="petrolKmPerL" value="14"><input type="hidden" name="evKmPerKwh" value="8.064516129"><input type="hidden" name="batteryKwh" value="20">
+<label class="check"><input type="checkbox" name="batteryReplacement" id="batteryReplacement"> 10年後に同じ容量の電池へ交換する</label>
+<p class="hint">10年以内に使い終わる場合は交換しません。交換は1回のみ。交換が必ず必要という意味ではありません。</p>
+</section>
+<section class="panel electricity" id="electricity">
+<p class="eyebrow">03 / どこで充電する？</p><h2>国を選んで、電気を比べよう。</h2>
+<p>G7の7か国と中国。<b>2025年の発電量の割合</b>で比べます。</p>
+<div id="country-buttons" class="country-buttons" role="group" aria-label="充電する国"></div>
+<div class="electricity-visual">
+<div id="electricity-pie" class="electricity-pie" role="img"><div class="pie-center"><span id="pie-country">日本</span><b>100<span>%</span></b><small>電源構成</small></div></div>
+<div><h3 id="country-title"></h3><div id="pie-legend" class="pie-legend"></div><p class="hint">火力＝石炭・石油・天然ガス。自然エネルギー＝水力・風力・太陽光・バイオエネルギー・地熱。</p></div>
+</div>
+<p class="hint" id="mix-note"></p><p class="hint">出典：自然エネルギー財団「世界の電力」（2025年、2026年3月24日更新）。CO₂への換算は一部仮定を含む簡易計算です。</p>
+</section>
+</form>
+<p id="error" class="error" role="alert" hidden></p>
+<section id="results" aria-labelledby="result-title">
+<div class="section-head"><div><p class="eyebrow">04 / 結果を読んでみよう</p><h2 id="result-title"></h2></div><span class="pill">仮想条件の計算結果</span></div>
+<p id="result-context"></p><p id="sensitivity-note" class="notice"></p>
+<div class="result-cards">
+<article class="metric ice"><h3 id="ice-result-name">ガソリン車</h3><p><strong id="total-ICEV"></strong> <span>t-CO₂e</span></p><p id="perkm-ICEV"></p></article>
+<article class="metric ev"><h3 id="ev-result-name">EV</h3><p><strong id="total-BEV"></strong> <span>t-CO₂e</span></p><p id="perkm-BEV"></p></article>
+</div>
+<p>全期間の走行距離：<b id="distance-total"></b>。1 kmあたりの値にも製造分を含みます。</p>
+<div class="result-layout">
+<article class="panel chart-panel"><h3>使い始めからの合計</h3><div class="legend"><span class="ice-key">━━ ガソリン車</span><span class="ev-key">┄┄ EV</span></div><div id="chart-area"><svg id="cumulative-chart" role="img" aria-label="累積排出量。詳しい数値は直後の表に記載。"></svg></div><p class="hint">丸印は合計が同じになる点です。交換で線が跳ねるときは、同じ値を通らず大小関係が変わる場合もあります。</p><ul id="events"></ul><p id="replacement-note" class="hint"></p>
+<details><summary>グラフの数値を表で読む（t-CO₂e）</summary><table><thead><tr><th scope="col">時点</th><th scope="col">ガソリン車</th><th scope="col">EV</th></tr></thead><tbody id="timeline-body"></tbody></table></details>
+</article>
+<article class="panel"><h3>電気の排出量の目安</h3><p class="factor"><b id="electricity-factor"></b></p><p class="hint">国の発電割合と発電方式の係数から計算しています。国別の実測CO₂原単位やIEA国別LCAではありません。</p><p class="hint">この電源構成が使い終わるまで続くと仮定。国を変えても、ガソリン製造や製造・物流の条件は変わりません。</p></article>
+</div>
+<article class="panel"><h3>排出量の内訳</h3><p class="hint">単位：t-CO₂e。四捨五入のため、表示値の和と合計が少しずれる場合があります。</p><table><thead><tr><th scope="col">どこで出る？</th><th scope="col">ガソリン車</th><th scope="col">EV</th></tr></thead><tbody id="breakdown-body"></tbody></table></article>
+</section>
+<section id="guide" class="panel learning">
+<p class="eyebrow">正解を当てるより、理由を見つけよう</p><h2>1つだけ変えて、もう一度。</h2>
+<ol><li>まず今の結果を確認する。</li><li>「使う年数を短くすると？」と予想する。</li><li>ほかの条件を変えずに、年数だけ変える。</li><li>製造分と走行分のどちらが効いたか、内訳で確かめる。</li></ol>
+<p>1日の距離を5 kmにしたら？ 違うEVを選ぶと電池製造分はどう変わる？ 電池交換の後に、大小関係がもう一度変わることはある？</p>
+<p><b>この数値だけで「環境によい車」を決めることはできません。</b>大気汚染、水、資源、安全性、費用なども別に考える必要があります。</p>
+</section>
+<section id="sources" class="panel sources">
+<p class="eyebrow">何が資料の値で、何が仮定？</p><h2>出典と、計算の約束</h2>
+<p><b>対象年：</b>電源構成は2025年。排出係数と車両仕様の出典年は下記の通りです。電源構成・排出係数・燃費を全期間固定します。将来予測やIEAのSTEPS/NZEシナリオは再現しません。</p>
+<details open><summary>参考資料から使った値</summary>
+<p>発電係数（g-CO₂e/kWh）：石炭820、天然ガス490、原子力12はIPCC AR5 WGIII（2014）Annex III 表A.III.2の中央値。石油700、自然エネルギー50、その他500は学習用の仮定です。自然エネルギーの内訳は元表にないため、国ごとの技術構成や変動幅は再現できません。統計値と仮定値を混ぜた結果を実測値として扱わないでください。</p>
+<p><a href="https://www.ipcc.ch/site/assets/uploads/2018/02/ipcc_wg3_ar5_annex-iii.pdf" target="_blank" rel="noopener noreferrer">IPCCの原資料（英語PDF・外部サイト）</a></p>
+<p>ガソリン燃焼2.3 kg-CO₂/L、最初の電池製造の推定モデルの初期値90 kg-CO₂e/kWhはIEA Methodology（2024）を参考にしています。電池の90は2022年の販売構成に基づく値で、特定の車の値ではありません。排気由来の計算はCO₂のみの近似です。</p>
+<p><a href="https://iea.blob.core.windows.net/assets/4559e539-d8c4-41c1-b5e6-2a65d1e0cc50/EVLifeCycleAssessmentCalculatorMethodology.pdf" target="_blank" rel="noopener noreferrer">IEA Methodology（英語PDF・外部サイト）</a> ／ <a href="https://www.iea.org/data-and-statistics/data-tools/ev-life-cycle-assessment-calculator" target="_blank" rel="noopener noreferrer">IEA Calculator（外部サイト）</a></p>
+</details>
+<details><summary>この教材で置いた仮定と数式</summary>
+<p>初期条件：10 km/日、10年、非ハイブリッド乗用車14 km/L、日産サクラ（124 Wh/km、20 kWh）、日本。電池以外の製造・物流は乗用車9,700・サクラ8,400 kg-CO₂e（資料に基づく推定）。ガソリン上流0.5 kg-CO₂e/L。製造推定値・上流係数と、スポーツカー8・乗用車14・軽自動車22 km/Lは学習用仮定です。プリウスとEVの電費・容量は下のメーカー資料に基づきます。入力範囲も操作のための制限で、科学的な信頼区間ではありません。</p>
+<ul><li>年間距離＝1日の距離×365。</li><li>年間ガソリン量＝年間距離÷燃費。排出量＝ガソリン量×（2.3＋設定した上流排出係数）。</li><li>年間充電電力量＝年間距離÷電費。排出量＝電力量×電源構成から計算した係数。</li><li>電池製造＝容量×設定した製造係数。交換分は10年の時点で追加し、それ以前の値は変えません。</li><li>合計＝電池以外の製造・物流＋最初の電池＋交換電池＋使用期間の燃料・電気製造＋ガソリン燃焼。</li></ul>
+<p>IEAの国別モデル、車格別製造モデル、交換電池の将来技術改善は再現していません。電池化学、製造地、温度、劣化、渋滞等も個別には扱いません。電力の送配電を含む境界は簡略化しており、発電の中央値を充電電力量へ適用する実験です。実車の購入判断や精密な排出報告には使えません。</p>
+</details>
+<details><summary>先生・保護者の方へ：利用と確認範囲</summary>
+<p>写真は利用条件を確認して同梱しています。写真表示のための外部通信、外部フォント、解析SDKはありません。名前の入力、ログイン、保存、入力内容の送信はありません。出典リンクを押すと外部サイトへ移動します。Web公開時にはホスティング事業者の通常のアクセスログが残る可能性があります。</p>
+<p>ファイル版はフォルダーごと保存してindex.htmlを開けます。JavaScriptが有効なブラウザが必要です。実際の学校端末・フィルター・支援技術との組み合わせは、授業前にこのページの操作を確認してください。</p>
+</details>
+<details><summary>車両・電源データと写真の出典</summary><p>推定方法：電池以外の重量×8.8 kg-CO₂e/kg。EX30とXC40 ICEの公表LCAから導いた粗い共通係数です。製造感度幅は電池以外±30%、電池はEX30のLFP/NMC公表係数（約69〜113 kg/kWh）を当てた場合。対象車の信頼区間ではなく、結果の変化を見る幅です。未知の材質・工場差は個別に反映できません。</p><div id="data-sources"></div><div id="photo-sources"></div></details>
+</section>
+</main>
+<footer>教材 v4 · 2026-10-01<br>IEA由来の参考値：International Energy Agency, CC BY 4.0（教育用に改変）。IPCC参考値：Schlömer et al., 2014, Annex III, Table A.III.2。両機関による公式教材・認証ではありません。</footer>
+<script defer src="js/data.js?v=4"></script>
+<script defer src="js/model.js?v=4"></script>
+<script defer src="js/charts.js?v=4"></script>
+<script defer src="js/app.js?v=4"></script>
+</body></html>
